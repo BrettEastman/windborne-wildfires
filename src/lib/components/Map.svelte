@@ -1,104 +1,145 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { Map as LeafletMap, LayerGroup, CircleMarker } from 'leaflet';
-	import type { BalloonDataset, WildfirePoint } from '$lib/types';
+  import { onMount } from "svelte";
+  import type { Map as LeafletMap, LayerGroup, CircleMarker } from "leaflet";
+  import type { BalloonDataset, WildfirePoint } from "$lib/types";
 
-	// Props using Svelte 5 runes
-	let { balloonDatasets = [], wildfires = [] }: { balloonDatasets?: BalloonDataset[]; wildfires?: WildfirePoint[] } = $props();
+  // Props using Svelte 5 runes
+  let {
+    balloonDatasets = [],
+    wildfires = [],
+  }: { balloonDatasets?: BalloonDataset[]; wildfires?: WildfirePoint[] } =
+    $props();
 
-	let mapContainer: HTMLDivElement;
-	let map: LeafletMap | null = null;
-	let balloonLayer: LayerGroup | null = null;
-	let wildfireLayer: LayerGroup | null = null;
+  let mapContainer: HTMLDivElement;
+  let map: LeafletMap | null = null;
+  let balloonLayer: LayerGroup | null = null;
+  let wildfireLayer: LayerGroup | null = null;
+  let leafletLoaded = $state(false);
 
-	onMount(async () => {
-		// Dynamic import to avoid SSR issues
-		const L = await import('leaflet');
+  onMount(() => {
+    // Initialize map asynchronously
+    (async () => {
+      // Dynamic import to avoid SSR issues
+      const L = await import("leaflet");
 
-		// Initialize map centered on US
-		map = L.map(mapContainer).setView([39.8283, -98.5795], 4);
+      // Initialize map centered on US
+      map = L.map(mapContainer).setView([39.8283, -98.5795], 4);
 
-		// Add OpenStreetMap tiles
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-			maxZoom: 19
-		}).addTo(map);
+      // Add OpenStreetMap tiles
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+      }).addTo(map);
 
-		// Create layer groups
-		balloonLayer = L.layerGroup().addTo(map);
-		wildfireLayer = L.layerGroup().addTo(map);
+      // Create layer groups
+      balloonLayer = L.layerGroup().addTo(map);
+      wildfireLayer = L.layerGroup().addTo(map);
 
-		return () => {
-			map?.remove();
-		};
-	});
+      leafletLoaded = true;
+    })();
 
-	// Update balloon markers when data changes
-	$effect(() => {
-		if (!balloonLayer) return;
+    // Return cleanup function
+    return () => {
+      map?.remove();
+    };
+  });
 
-		const L = (window as any).L;
-		if (!L) return;
+  // Update balloon markers when data changes
+  $effect(() => {
+    console.log("Balloon effect triggered", {
+      balloonLayer,
+      leafletLoaded,
+      datasetsLength: balloonDatasets.length,
+    });
 
-		// Clear existing markers
-		balloonLayer.clearLayers();
+    if (!balloonLayer || !leafletLoaded) {
+      console.log(
+        "Skipping balloon render: balloonLayer=",
+        !!balloonLayer,
+        "leafletLoaded=",
+        leafletLoaded
+      );
+      return;
+    }
 
-		// Add markers for each dataset
-		balloonDatasets.forEach((dataset) => {
-			const age = dataset.hour;
-			const opacity = 1 - age / 24; // Fade with age
+    const L = (window as any).L;
+    if (!L) {
+      console.warn("Leaflet not available in window");
+      return;
+    }
 
-			dataset.points.forEach(([lat, lon, altitude]) => {
-				const marker = L.circleMarker([lat, lon], {
-					radius: 3,
-					fillColor: '#3b82f6',
-					color: '#1e40af',
-					weight: 1,
-					opacity: opacity,
-					fillOpacity: opacity * 0.6
-				});
+    // Clear existing markers
+    balloonLayer.clearLayers();
 
-				marker.bindPopup(`
-					<strong>Weather Balloon</strong><br/>
-					Latitude: ${lat.toFixed(4)}°<br/>
-					Longitude: ${lon.toFixed(4)}°<br/>
-					Altitude: ${altitude.toFixed(0)}m<br/>
-					Age: ${age} hour${age === 1 ? '' : 's'}
-				`);
+    const totalPoints = balloonDatasets.reduce(
+      (sum, ds) => sum + ds.points.length,
+      0
+    );
+    console.log(
+      `Rendering ${balloonDatasets.length} balloon datasets with ${totalPoints} total points`
+    );
 
-				balloonLayer!.addLayer(marker);
-			});
-		});
-	});
+    // Add markers for each dataset
+    balloonDatasets.forEach((dataset) => {
+      const age = dataset.hour;
+      const opacity = 1 - age / 24; // Fade with age
 
-	// Update wildfire markers when data changes
-	$effect(() => {
-		if (!wildfireLayer) return;
+      dataset.points.forEach(([lat, lon, altitude]) => {
+        const marker = L.circleMarker([lat, lon], {
+          radius: 3,
+          fillColor: "#3b82f6",
+          color: "#1e40af",
+          weight: 1,
+          opacity: opacity,
+          fillOpacity: opacity * 0.6,
+        });
 
-		const L = (window as any).L;
-		if (!L) return;
+        marker.bindPopup(`
+          <strong>Weather Balloon</strong><br/>
+          Latitude: ${lat.toFixed(4)}°<br/>
+          Longitude: ${lon.toFixed(4)}°<br/>
+          Altitude: ${altitude.toFixed(0)}m<br/>
+          Age: ${age} hour${age === 1 ? "" : "s"}
+        `);
 
-		// Clear existing markers
-		wildfireLayer.clearLayers();
+        balloonLayer!.addLayer(marker);
+      });
+    });
 
-		// Add markers for each fire
-		wildfires.forEach((fire) => {
-			// Size based on brightness (typical range 300-400K)
-			const size = Math.min(10, Math.max(4, (fire.brightness - 300) / 10));
+    console.log("Balloon markers rendered successfully");
+  });
 
-			// Color based on confidence
-			const color = fire.confidence >= 80 ? '#dc2626' : '#f97316';
+  // Update wildfire markers when data changes
+  $effect(() => {
+    if (!wildfireLayer || !leafletLoaded) return;
 
-			const marker = L.circleMarker([fire.latitude, fire.longitude], {
-				radius: size,
-				fillColor: color,
-				color: '#7f1d1d',
-				weight: 1,
-				opacity: 0.8,
-				fillOpacity: 0.6
-			});
+    const L = (window as any).L;
+    if (!L) return;
 
-			marker.bindPopup(`
+    // Clear existing markers
+    wildfireLayer.clearLayers();
+
+    console.log(`Rendering ${wildfires.length} wildfire points`);
+
+    // Add markers for each fire
+    wildfires.forEach((fire) => {
+      // Size based on brightness (typical range 300-400K)
+      const size = Math.min(10, Math.max(4, (fire.brightness - 300) / 10));
+
+      // Color based on confidence
+      const color = fire.confidence >= 80 ? "#dc2626" : "#f97316";
+
+      const marker = L.circleMarker([fire.latitude, fire.longitude], {
+        radius: size,
+        fillColor: color,
+        color: "#7f1d1d",
+        weight: 1,
+        opacity: 0.8,
+        fillOpacity: 0.6,
+      });
+
+      marker.bindPopup(`
 				<strong>Active Fire</strong><br/>
 				Latitude: ${fire.latitude.toFixed(4)}°<br/>
 				Longitude: ${fire.longitude.toFixed(4)}°<br/>
@@ -107,22 +148,22 @@
 				Detected: ${fire.acq_date} ${fire.acq_time}
 			`);
 
-			wildfireLayer!.addLayer(marker);
-		});
-	});
+      wildfireLayer!.addLayer(marker);
+    });
+  });
 </script>
 
 <div bind:this={mapContainer} class="map-container"></div>
 
 <style>
-	.map-container {
-		width: 100%;
-		height: 100%;
-		min-height: 500px;
-	}
+  .map-container {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+  }
 
-	:global(.leaflet-container) {
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-			Cantarell, sans-serif;
-	}
+  :global(.leaflet-container) {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, sans-serif;
+  }
 </style>
