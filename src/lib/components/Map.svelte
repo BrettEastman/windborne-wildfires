@@ -15,12 +15,13 @@
   let balloonLayer: LayerGroup | null = null;
   let wildfireLayer: LayerGroup | null = null;
   let leafletLoaded = $state(false);
+  let L: any = null; // Store the Leaflet reference
 
   onMount(() => {
     // Initialize map asynchronously
     (async () => {
       // Dynamic import to avoid SSR issues
-      const L = await import("leaflet");
+      L = await import("leaflet");
 
       // Initialize map centered on US
       map = L.map(mapContainer).setView([39.8283, -98.5795], 4);
@@ -53,19 +54,15 @@
       datasetsLength: balloonDatasets.length,
     });
 
-    if (!balloonLayer || !leafletLoaded) {
+    if (!balloonLayer || !leafletLoaded || !L) {
       console.log(
         "Skipping balloon render: balloonLayer=",
         !!balloonLayer,
         "leafletLoaded=",
-        leafletLoaded
+        leafletLoaded,
+        "L=",
+        !!L
       );
-      return;
-    }
-
-    const L = (window as any).L;
-    if (!L) {
-      console.warn("Leaflet not available in window");
       return;
     }
 
@@ -112,10 +109,24 @@
 
   // Update wildfire markers when data changes
   $effect(() => {
-    if (!wildfireLayer || !leafletLoaded) return;
+    console.log("Wildfire effect triggered", {
+      wildfireLayer: !!wildfireLayer,
+      leafletLoaded,
+      L: !!L,
+      wildfires: wildfires.length,
+    });
 
-    const L = (window as any).L;
-    if (!L) return;
+    if (!wildfireLayer || !leafletLoaded || !L) {
+      console.log(
+        "Skipping wildfire render: wildfireLayer=",
+        !!wildfireLayer,
+        "leafletLoaded=",
+        leafletLoaded,
+        "L=",
+        !!L
+      );
+      return;
+    }
 
     // Clear existing markers
     wildfireLayer.clearLayers();
@@ -140,16 +151,18 @@
       });
 
       marker.bindPopup(`
-				<strong>Active Fire</strong><br/>
-				Latitude: ${fire.latitude.toFixed(4)}°<br/>
-				Longitude: ${fire.longitude.toFixed(4)}°<br/>
-				Brightness: ${fire.brightness.toFixed(1)}K<br/>
-				Confidence: ${fire.confidence}%<br/>
-				Detected: ${fire.acq_date} ${fire.acq_time}
-			`);
+                <strong>Active Fire</strong><br/>
+                Latitude: ${fire.latitude.toFixed(4)}°<br/>
+                Longitude: ${fire.longitude.toFixed(4)}°<br/>
+                Brightness: ${fire.brightness.toFixed(1)}K<br/>
+                Confidence: ${fire.confidence}%<br/>
+                Detected: ${fire.acq_date} ${fire.acq_time}
+            `);
 
       wildfireLayer!.addLayer(marker);
     });
+
+    console.log("Wildfire markers rendered successfully");
   });
 </script>
 
