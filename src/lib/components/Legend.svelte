@@ -22,18 +22,6 @@
   onclick={toggleModal}
   aria-label="Open map legend"
 >
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-  >
-    <path
-      d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4m-8 4V9a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v6m-6 0h6"
-    />
-  </svg>
   <span>Legend</span>
 </button>
 

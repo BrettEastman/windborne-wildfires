@@ -128,7 +128,6 @@ function createWildfireStore() {
    * Returns cleanup function to stop polling
    */
   function startPolling(): () => void {
-    // Initial fetch
     fetchFires();
 
     // Poll every 2 minutes (120000ms)

@@ -4,7 +4,7 @@ A real-time visualization tool that displays WindBorne Systems' weather balloon 
 
 ## Live Demo
 
-[Deployment URL will be added here after Vercel deployment]
+[WindBorne Weather Balloon & Wildfire Tracker](https://windborne-wildfires.vercel.app/)
 
 ## What It Does
 
@@ -26,15 +26,16 @@ By visualizing both datasets together, this app demonstrates how WindBorne's net
 
 ## Tech Stack
 
-- **SvelteKit** - Framework with adapter-static for deployment
-- **TypeScript** - Type-safe development
-- **Leaflet** - Interactive mapping (no Mapbox or other frameworks)
-- **Standard CSS** - Clean styling without frameworks
-- **Vite** - Build tooling
+- **SvelteKit**
+- **TypeScript**
+- **Leaflet**
+- **Standard CSS**
+- **Vite**
 
 ## Data Sources
 
 - **Balloon Data**: [WindBorne Systems Treasure Hunt API](https://a.windbornesystems.com/treasure/)
+
   - 24 hourly endpoints (00.json through 23.json)
   - Each contains ~1000 balloon positions [lat, lon, altitude]
   - Robust validation filters corrupted entries
@@ -53,52 +54,22 @@ By visualizing both datasets together, this app demonstrates how WindBorne's net
 - **Real-time Statistics**: Shows active data counts and error tracking
 - **Interactive Map**: Click markers for detailed information about each point
 
-## Local Development
-
-### Prerequisites
-
-- Node.js 18+ and npm
-
-### Installation
-
-\`\`\`bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Open browser to http://localhost:5173
-\`\`\`
-
-### Build for Production
-
-\`\`\`bash
-# Build static site
-npm run build
-
-# Preview production build
-npm run preview
-\`\`\`
-
-## Project Structure
-
 \`\`\`
 src/
 ├── routes/
-│   └── +page.svelte              # Main page with map and stats
+│ └── +page.svelte # Main page with map and stats
 ├── lib/
-│   ├── stores/
-│   │   ├── balloonData.ts        # Balloon fetching + polling
-│   │   └── wildfireData.ts       # Wildfire fetching + polling
-│   ├── components/
-│   │   ├── Map.svelte            # Leaflet map with markers
-│   │   └── Legend.svelte         # Map legend and explanation
-│   ├── utils/
-│   │   └── parseBalloons.ts      # Data validation logic
-│   └── types/
-│       └── index.ts              # TypeScript types
-└── app.css                       # Global styles
+│ ├── stores/
+│ │ ├── balloonData.ts # Balloon fetching + polling
+│ │ └── wildfireData.ts # Wildfire fetching + polling
+│ ├── components/
+│ │ ├── Map.svelte # Leaflet map with markers
+│ │ └── Legend.svelte # Map legend and explanation
+│ ├── utils/
+│ │ └── parseBalloons.ts # Data validation logic
+│ └── types/
+│ └── index.ts # TypeScript types
+└── app.css # Global styles
 \`\`\`
 
 ## Data Validation
@@ -113,13 +84,6 @@ The application implements strict validation for balloon data to handle potentia
 
 Invalid entries are filtered out and counted to demonstrate robust error handling.
 
-## Performance
-
-**Request Budget (per hour):**
-- Balloon endpoints: 24 files × 12 requests/hour = 288 requests
-- Wildfire endpoint: 1 file × 6 requests/hour = 6 requests
-- **Total: 294 requests/hour** ✅ (well under 1000 limit)
-
 ## Deployment
 
 Deployed on Vercel with automatic deployments from the main branch.
@@ -127,8 +91,8 @@ Deployed on Vercel with automatic deployments from the main branch.
 ## Author
 
 Brett Eastman
+
 - Portfolio: [bretteastman.dev](https://www.bretteastman.dev/)
-- Email: brett.austin.eastman@gmail.com
 
 ## License
 

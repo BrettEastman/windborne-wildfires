@@ -110,7 +110,6 @@ Similar pattern to balloon store:
 
 - Fetch from NASA FIRMS
 - Parse CSV/JSON response
-- Poll every 10 minutes (wildfires update less frequently)
 - Handle fetch errors gracefully
 
 ### Phase 5: Map Component

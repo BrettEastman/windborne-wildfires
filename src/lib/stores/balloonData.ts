@@ -37,7 +37,6 @@ function createBalloonStore() {
 
       const rawData = await response.json();
 
-      // Validate data
       if (!Array.isArray(rawData)) {
         console.warn(`Invalid data format for ${hourStr}.json`);
         return null;
@@ -71,18 +70,14 @@ function createBalloonStore() {
     }));
 
     try {
-      // Create array of hour numbers: [0, 1, 2, ..., 23]
       const hours = Array.from({ length: HOURS }, (_, i) => i);
 
-      // Fetch all hours in parallel
       const results = await Promise.all(hours.map((hour) => fetchHour(hour)));
 
-      // Filter out failed requests
       const successfulDatasets = results.filter(
         (dataset): dataset is BalloonDataset => dataset !== null
       );
 
-      // Update store with successful datasets
       update((store) => ({
         datasets: successfulDatasets,
         status: {
@@ -114,7 +109,6 @@ function createBalloonStore() {
    * Returns cleanup function to stop polling
    */
   function startPolling(): () => void {
-    // Initial fetch
     fetchAll();
 
     // Poll every 3 minutes (180000ms)

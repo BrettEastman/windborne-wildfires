@@ -25,11 +25,6 @@
     $balloonData.datasets.reduce((sum, ds) => sum + ds.points.length, 0)
   );
 
-  // Calculate total errors filtered
-  let totalErrors = $derived(
-    $balloonData.datasets.reduce((sum, ds) => sum + ds.errorCount, 0)
-  );
-
   // Format last updated time
   function formatTime(date: Date | null): string {
     if (!date) return "Never";

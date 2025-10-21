@@ -1,9 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Map as LeafletMap, LayerGroup, CircleMarker } from "leaflet";
+  import type { Map as LeafletMap, LayerGroup } from "leaflet";
   import type { BalloonDataset, WildfirePoint } from "$lib/types";
 
-  // Props using Svelte 5 runes
   let {
     balloonDatasets = [],
     wildfires = [],
@@ -15,7 +14,7 @@
   let balloonLayer: LayerGroup | null = null;
   let wildfireLayer: LayerGroup | null = null;
   let leafletLoaded = $state(false);
-  let L: any = null; // Store the Leaflet reference
+  let L: typeof import("leaflet") | null = null;
 
   onMount(() => {
     // Initialize map asynchronously
@@ -83,7 +82,7 @@
       const opacity = 1 - age / 24; // Fade with age
 
       dataset.points.forEach(([lat, lon, altitude]) => {
-        const marker = L.circleMarker([lat, lon], {
+        const marker = L?.circleMarker([lat, lon], {
           radius: 3,
           fillColor: "#3b82f6",
           color: "#1e40af",
@@ -92,7 +91,7 @@
           fillOpacity: opacity * 0.6,
         });
 
-        marker.bindPopup(`
+        marker?.bindPopup(`
           <strong>Weather Balloon</strong><br/>
           Latitude: ${lat.toFixed(4)}°<br/>
           Longitude: ${lon.toFixed(4)}°<br/>
@@ -100,7 +99,7 @@
           Age: ${age} hour${age === 1 ? "" : "s"}
         `);
 
-        balloonLayer!.addLayer(marker);
+        marker && balloonLayer!.addLayer(marker);
       });
     });
 
@@ -141,7 +140,7 @@
       // Color based on confidence
       const color = fire.confidence >= 80 ? "#dc2626" : "#f97316";
 
-      const marker = L.circleMarker([fire.latitude, fire.longitude], {
+      const marker = L?.circleMarker([fire.latitude, fire.longitude], {
         radius: size,
         fillColor: color,
         color: "#7f1d1d",
@@ -150,7 +149,7 @@
         fillOpacity: 0.6,
       });
 
-      marker.bindPopup(`
+      marker?.bindPopup(`
                 <strong>Active Fire</strong><br/>
                 Latitude: ${fire.latitude.toFixed(4)}°<br/>
                 Longitude: ${fire.longitude.toFixed(4)}°<br/>
@@ -159,7 +158,7 @@
                 Detected: ${fire.acq_date} ${fire.acq_time}
             `);
 
-      wildfireLayer!.addLayer(marker);
+      marker && wildfireLayer!.addLayer(marker);
     });
 
     console.log("Wildfire markers rendered successfully");
