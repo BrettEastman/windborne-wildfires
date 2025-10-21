@@ -212,7 +212,7 @@ Write one sentence about collaboration + one sentence about why wildfires. Examp
     "email": "brett.austin.eastman@gmail.com",
     "role": "Junior Web Developer",
     "notes": "I chose wildfire data because it directly connects to WindBorne's atmospheric monitoring mission—understanding conditions near active fires could improve disaster response and climate science.",
-    "submission_url": "https://your-vercel-app.vercel.app",
+    "submission_url": "https://windborne-wildfires.vercel.app/",
     "portfolio_url": "https://www.bretteastman.dev/",
     "resume_url": "https://drive.google.com/file/d/1VOvlsPzH0N5xhieyJWyBuF5qD2-O2ip9/view?usp=drive_link"
   }
