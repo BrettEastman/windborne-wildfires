@@ -174,9 +174,4 @@
     height: 100%;
     min-height: 500px;
   }
-
-  :global(.leaflet-container) {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, sans-serif;
-  }
 </style>

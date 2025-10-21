@@ -50,7 +50,6 @@ Filter out invalid entries and track how many were rejected per file. This shows
 
 - NASA FIRMS API: https://firms.modaps.eosdis.nasa.gov/
 - May need free API key (check their docs)
-- If so, my API key is dc2b08b88b2888a01a06233aaec18774
 - Returns CSV or JSON with fire locations, brightness, confidence, timestamps
 - Focus on fires from last 24-48 hours
 
