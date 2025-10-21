@@ -54,24 +54,6 @@ By visualizing both datasets together, this app demonstrates how WindBorne's net
 - **Real-time Statistics**: Shows active data counts and error tracking
 - **Interactive Map**: Click markers for detailed information about each point
 
-\`\`\`
-src/
-├── routes/
-│ └── +page.svelte # Main page with map and stats
-├── lib/
-│ ├── stores/
-│ │ ├── balloonData.ts # Balloon fetching + polling
-│ │ └── wildfireData.ts # Wildfire fetching + polling
-│ ├── components/
-│ │ ├── Map.svelte # Leaflet map with markers
-│ │ └── Legend.svelte # Map legend and explanation
-│ ├── utils/
-│ │ └── parseBalloons.ts # Data validation logic
-│ └── types/
-│ └── index.ts # TypeScript types
-└── app.css # Global styles
-\`\`\`
-
 ## Data Validation
 
 The application implements strict validation for balloon data to handle potential corruption:
