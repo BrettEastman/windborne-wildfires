@@ -48,34 +48,27 @@
 <div class="app">
   <header>
     <div class="header-content">
-      <h1>WindBorne Weather Balloon & Wildfire Tracker</h1>
-      <p class="subtitle">
-        Visualizing atmospheric monitoring data alongside active wildfire
-        locations
-      </p>
-    </div>
-  </header>
-
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-label">Balloon Datasets</div>
-      <div class="stat-value">{$balloonData.datasets.length} / 24</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Total Balloon Points</div>
-      <div class="stat-value">{totalBalloonPoints.toLocaleString()}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Active Fires</div>
-      <div class="stat-value">
-        {$wildfireData.fires.length.toLocaleString()}
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="stat-label">Balloon Points:</span>
+          <span class="stat-value">{totalBalloonPoints.toLocaleString()}</span>
+        </div>
+        <div class="header-stat">
+          <span class="stat-label">Active Fires:</span>
+          <span class="stat-value"
+            >{$wildfireData.fires.length.toLocaleString()}</span
+          >
+        </div>
+      </div>
+      <div class="header-title">
+        <h1>WindBorne Weather Balloon & Wildfire Tracker</h1>
+        <p class="subtitle">
+          Visualizing atmospheric monitoring data alongside active wildfire
+          locations
+        </p>
       </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Invalid Points Filtered</div>
-      <div class="stat-value">{totalErrors.toLocaleString()}</div>
-    </div>
-  </div>
+  </header>
 
   {#if $balloonData.status.loading || $wildfireData.status.loading}
     <div class="loading-banner">Loading data...</div>
@@ -130,7 +123,6 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    max-width: 1200px;
     margin: 0 auto;
   }
 
@@ -141,8 +133,38 @@
   }
 
   .header-content {
-    max-width: 1200px;
     margin: 0 auto;
+    display: flex;
+    gap: 20px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    flex-shrink: 0;
+  }
+
+  .header-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .header-stat .stat-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
+  .header-stat .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .header-title {
+    flex: 1;
     text-align: center;
   }
 
@@ -156,36 +178,6 @@
     margin: 0;
     font-size: 16px;
     opacity: 0.95;
-  }
-
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    padding: 20px;
-    background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .stat-card {
-    background: white;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-
-  .stat-label {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-
-  .stat-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2937;
   }
 
   .loading-banner,
@@ -245,6 +237,21 @@
   }
 
   @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .header-stats {
+      order: 2;
+      justify-content: center;
+    }
+
+    .header-title {
+      order: 1;
+    }
+
     h1 {
       font-size: 22px;
     }
@@ -253,10 +260,8 @@
       font-size: 14px;
     }
 
-    .stats {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      padding: 16px;
+    .header-stat .stat-value {
+      font-size: 16px;
     }
 
     .footer-content {
