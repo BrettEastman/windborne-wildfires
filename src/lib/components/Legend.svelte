@@ -127,12 +127,6 @@
     transform: translateY(0);
   }
 
-  .legend-toggle svg {
-    width: 20px;
-    height: 20px;
-    color: #6b7280;
-  }
-
   /* Modal Overlay */
   .modal-overlay {
     position: fixed;
