@@ -1,6 +1,6 @@
 import { json } from "@sveltejs/kit";
 
-const API_KEY = "dc2b08b88b2888a01a06233aaec18774";
+const API_KEY = process.env.FIRMS_API_KEY;
 const FIRMS_URL = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${API_KEY}/MODIS_NRT/world/1`;
 
 export async function GET() {

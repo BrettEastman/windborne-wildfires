@@ -131,10 +131,10 @@ function createWildfireStore() {
     // Initial fetch
     fetchFires();
 
-    // Poll every 10 minutes (600000ms)
+    // Poll every 2 minutes (120000ms)
     pollingInterval = window.setInterval(() => {
       fetchFires();
-    }, 10 * 60 * 1000);
+    }, 2 * 60 * 1000);
 
     // Return cleanup function
     return () => {
